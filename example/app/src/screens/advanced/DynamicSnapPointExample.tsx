@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, useWindowDimensions } from 'react-native';
 import BottomSheet, {
-  BottomSheetView,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,7 +10,7 @@ import { Button } from '../../components/button';
 
 const DynamicSnapPointExample = () => {
   // state
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
   const initialSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
 
   // hooks
@@ -47,7 +48,7 @@ const DynamicSnapPointExample = () => {
   const emojiContainerStyle = useMemo(
     () => ({
       ...styles.emojiContainer,
-      height: 50 * count,
+      height: 200 * count,
     }),
     [count]
   );
@@ -61,12 +62,18 @@ const DynamicSnapPointExample = () => {
         ref={bottomSheetRef}
         snapPoints={animatedSnapPoints}
         handleHeight={animatedHandleHeight}
+        keyboardBlurBehavior="restore"
         contentHeight={animatedContentHeight}
         enablePanDownToClose={true}
         animateOnMount={true}
       >
-        <BottomSheetView
-          style={contentContainerStyle}
+        <BottomSheetScrollView
+          style={
+            {
+              // maxHeight: dimensions.height - 200,
+            }
+          }
+          contentContainerStyle={contentContainerStyle}
           onLayout={handleContentLayout}
         >
           <Text style={styles.message}>
@@ -77,7 +84,8 @@ const DynamicSnapPointExample = () => {
           </View>
           <Button label="Yes" onPress={handleIncreaseContentPress} />
           <Button label="Maybe" onPress={handleDecreaseContentPress} />
-        </BottomSheetView>
+          <BottomSheetTextInput style={{ backgroundColor: 'cyan' }} />
+        </BottomSheetScrollView>
       </BottomSheet>
     </View>
   );
